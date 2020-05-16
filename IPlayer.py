@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 import Game
-
+#1
 
 class IPlayer:
     def __init__(self, game: Game.Game, name: str, health: float):

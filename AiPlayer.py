@@ -7,4 +7,4 @@ class AiPlayer(IPlayer):
         super().__init__(game, health)
 
     def on_attack(self, attack_word: str):
-        pass
+        pass#1

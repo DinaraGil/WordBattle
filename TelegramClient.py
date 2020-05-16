@@ -1,4 +1,4 @@
-import telegram
+import telegram #1
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters
 
 from Game import Game

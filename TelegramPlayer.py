@@ -1,6 +1,6 @@
 from Game import Game
 from IPlayer import IPlayer
-
+#1
 
 class TelegramPlayer(IPlayer):
     def __init__(self, game: Game, user_id: int, name: str, health: float):

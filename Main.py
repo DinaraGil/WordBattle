@@ -10,4 +10,4 @@ player2 = ConsolePlayer(game, 'Robert', Settings.player_initial_health)
 game.add_player(player1)
 game.add_player(player2)
 
-game.start()
+game.start() #1

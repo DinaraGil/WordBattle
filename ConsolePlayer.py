@@ -11,7 +11,7 @@ class ConsolePlayer(IPlayer):
         self._name: str = name
 
     def on_attack(self, attack_word: str):
-        print('Player {} ({}) attacked by word {}'.format(self._name, self.health, attack_word))
+        print('Player {} ({}) attacked by word {}'.format(self._name, self.health, attack_word))#1
         asyncio.run(self._do_input())
 
     async def _do_input(self):
