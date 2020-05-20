@@ -22,8 +22,8 @@ class Game:
         self._winner: IPlayer
 
     def on_player_word(self, player: IPlayer, word: str): # -> bool:
-        if player.index != self._current_player_index:
-            return
+        # if player.index != self._current_player_index:
+        #     return
 
         self._calculate_player_health(player, word)
 

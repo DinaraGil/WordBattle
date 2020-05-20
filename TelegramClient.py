@@ -51,7 +51,7 @@ class TelegramClient:
         chat_id = update.message.chat_id
         game = self.get_or_create_game(chat_id)
 
-        if self.gameover_check_and_reply(game):
+        if self.gameover_check_and_reply(update, context, game):
             return
 
         update.message.reply_text('Введите ваше имя', reply_to_message_id=True)
