@@ -1,17 +1,15 @@
 from abc import abstractmethod
 
-import Game
-#1
 
 class IPlayer:
-    def __init__(self, game: Game.Game, name: str, health: float):
-        self._game: Game.Game = game
+    def __init__(self, game, name: str, health: float):
+        self._game = game
         self._index: int = -1
         self._name: str = name
         self._health: float = health
 
     @property
-    def game(self) -> Game.Game:
+    def game(self):
         return self._game
 
     @property
@@ -36,4 +34,7 @@ class IPlayer:
 
     @abstractmethod
     def on_attack(self, attack_word: str):
+        pass
+
+    def new_word(self, text):
         pass
