@@ -40,8 +40,9 @@ class TelegramClientLogic:
         game = self.get_or_create_game(chat_id)
         health = Settings.player_initial_health
 
-        player = TelegramPlayer(game, user_id, username, health)
-        game.add_player(player)
+        if self.get_player(chat_id, user_id) is None:
+            player = TelegramPlayer(game, user_id, username, health)
+            game.add_player(player)
 
         logger.info('Add new player. Chat_id = {}, username = {}, user_id = {}'.format(chat_id, username, user_id))
 

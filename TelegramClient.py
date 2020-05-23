@@ -60,16 +60,19 @@ class TelegramClient:
         return False
 
     def get_message(self, update, context):
+        if self.gameover_check_and_reply(update, context):
+            return
+
         text = update.message.text
         chat_id = update.message.chat.id
         user_id = update.message.from_user.id
 
-        if self.gameover_check_and_reply(update, context):
-            return
-
         logic_message = self.logic.get_message(text, chat_id, user_id)
 
         if logic_message is None:
+            return
+
+        if self.gameover_check_and_reply(update, context):
             return
 
         update.message.reply_text(logic_message, reply_to_message_id=True)
