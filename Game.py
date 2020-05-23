@@ -2,6 +2,8 @@ import sys
 from typing import List
 from IPlayer import IPlayer
 from Settings import Settings
+from pymorphy2 import MorphAnalyzer
+from Settings import WordTags
 
 
 class Game:
@@ -39,10 +41,25 @@ class Game:
 
         self._used_words.append(word.lower())
 
-    def is_word_correct(self, word):
-        if word.lower() in Settings.WORDS:
-            return True
-        return False
+    def word_checking(self, word):
+        if len(word.split()) >= 2:
+            return WordTags.not_exist
+
+        if not word.isalpha():
+            return WordTags.not_exist
+
+        word = word.lower()
+        morph = MorphAnalyzer()
+        parsed_word = morph.parse(word)[0]
+
+        if len(parsed_word.methods_stack) >= 2:
+            return WordTags.not_exist
+
+        if 'Name' in parsed_word.tag:
+            return WordTags.not_exist
+
+        if word.replace('ё', 'е') != parsed_word.normal_form.replace('ё', 'е'):
+            return WordTags.not_normal_form
 
     def is_word_used(self, word):
         if word.lower() in self._used_words:
