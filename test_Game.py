@@ -17,11 +17,11 @@ class TestGame(TestCase):
 
     def test__get_word2_diff(self):
         self.assertEqual('', Game._get_word2_diff('', ''))
-        self.assertEqual('eno', Game._get_word2_diff('', 'one'))
+        self.assertEqual('one', Game._get_word2_diff('', 'one'))
         self.assertEqual('', Game._get_word2_diff('one', ''))
         self.assertEqual('', Game._get_word2_diff('one', 'one'))
-        self.assertEqual('en', Game._get_word2_diff('o', 'one'))
+        self.assertEqual('ne', Game._get_word2_diff('o', 'one'))
         self.assertEqual('', Game._get_word2_diff('ones', 'one'))
         self.assertEqual('s', Game._get_word2_diff('one', 'ones'))
         self.assertEqual('tw', Game._get_word2_diff('one', 'two'))
-        self.assertEqual('eop', Game._get_word2_diff('blah', 'hope'))
+        self.assertEqual('ope', Game._get_word2_diff('blah', 'hope'))

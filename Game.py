@@ -86,8 +86,8 @@ class Game:
 
     @staticmethod
     def _get_word1_diff_number(word1: str, word2: str) -> int:
-        word1 = word1.lower()
-        word2 = word2.lower()
+        word1 = word1.lower().replace('ё', 'е')
+        word2 = word2.lower().replace('ё', 'е')
 
         diff = len(word1)
         if not word1 or not word2:
@@ -116,35 +116,44 @@ class Game:
 
     @staticmethod
     def _get_word2_diff(word1: str, word2: str) -> str:
-        word1 = word1.lower()
-        word2 = word2.lower()
-
-        word1_sorted = sorted(list(word1))
-        word2_sorted = sorted(list(word2))
+        word1 = word1.lower().replace('ё', 'е')
+        word2 = word2.lower().replace('ё', 'е')
 
         if not word1:
-            return ''.join(word2_sorted)
+            return word2
 
-        diff = ''
+        for symb in word1:
+            if symb in word2:
+                word2 = word2.replace(symb, '', 1)
 
-        i = 0
-        j = 0
-        while j < len(word2_sorted):
-            if i >= len(word1_sorted):
-                diff += ''.join(word2_sorted[j:])
-                break
-            ch1 = word1_sorted[i]
-            ch2 = word2_sorted[j]
-            if ch1 == ch2:
-                i += 1
-                j += 1
-            elif ch2 < ch1:
-                j += 1
-                diff += ch2
-            else:
-                i += 1
+        return word2
 
-        return diff
+        # word1_sorted = sorted(list(word1))
+        # word2_sorted = sorted(list(word2))
+        #
+        # if not word1:
+        #     return ''.join(word2_sorted)
+        #
+        # diff = ''
+        #
+        # i = 0
+        # j = 0
+        # while j < len(word2_sorted):
+        #     if i >= len(word1_sorted):
+        #         diff += ''.join(word2_sorted[j:])
+        #         break
+        #     ch1 = word1_sorted[i]
+        #     ch2 = word2_sorted[j]
+        #     if ch1 == ch2:
+        #         i += 1
+        #         j += 1
+        #     elif ch2 < ch1:
+        #         j += 1
+        #         diff += ch2
+        #     else:
+        #         i += 1
+
+        # return diff
 
     def get_current_player(self):
         return self._players[self._current_player_index]
