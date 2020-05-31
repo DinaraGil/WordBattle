@@ -36,5 +36,5 @@ class IPlayer:
     def on_attack(self, attack_word: str):
         pass
 
-    def new_word(self, text):
+    def new_word(self, *args, **kwargs):
         pass

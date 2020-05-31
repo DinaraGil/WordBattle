@@ -23,6 +23,9 @@ class Game:
         self._gameover = False
         self._winner: IPlayer
 
+    def get_used_words(self):
+        return self._used_words
+
     def on_player_word(self, player: IPlayer, word: str):
         self._calculate_player_health(player, word)
 
@@ -144,7 +147,14 @@ class Game:
             else:
                 i += 1
 
-        return diff
+       # return diff
+
+        word1 = word1.lower().replace('ё', 'е')
+        word2 = word2.lower().replace('ё', 'е')
+
+
+
+
 
     def get_current_player(self):
         return self._players[self._current_player_index]
