@@ -10,13 +10,13 @@ class Game:
     def __init__(self):
         self._players: List[IPlayer] = []
         self._last_attack_word: str = ''
-        self._current_player_index: int = 0
+        self._current_player_index: int = -1
         self._used_words: List[str] = []
         self._gameover = False
         self._winner: IPlayer
 
     def start(self):
-        self._current_player_index = 0
+        self._current_player_index = -1
         self._players: List[IPlayer] = []
         self._last_attack_word: str = ''
         self._used_words = []

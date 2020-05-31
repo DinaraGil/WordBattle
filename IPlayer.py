@@ -38,3 +38,6 @@ class IPlayer:
 
     def new_word(self, *args, **kwargs):
         pass
+
+    def get_reply_str(self):
+        pass

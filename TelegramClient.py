@@ -2,6 +2,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from Settings import Settings
 from TelegramClientLogic import TelegramClientLogic
+from Settings import GameModes
 
 logger = None
 
@@ -17,17 +18,22 @@ def setup_logger():
 
 
 class TelegramClient:
-    def __init__(self):
+    def __init__(self, game_mode):
+        self.game_mode = game_mode
+
         setup_logger()
 
         self._updater = Updater(Settings.TOKEN, use_context=True, request_kwargs=Settings.REQUEST_KWARGS)
 
         dp = self._updater.dispatcher
         dp.add_handler(CommandHandler("start", self.start))
-        dp.add_handler(CommandHandler('add_player', self.add_player))
+
+        if self.game_mode == GameModes.with_users:
+            dp.add_handler(CommandHandler('add_player', self.add_player))
+
         dp.add_handler(MessageHandler(Filters.text, self.get_message))
 
-        self.logic = TelegramClientLogic()
+        self.logic = TelegramClientLogic(game_mode)
 
         self._updater.start_polling()
 
@@ -37,11 +43,17 @@ class TelegramClient:
         logger.info('Got command /start')
 
         chat_id = update.message.chat_id
+        user_id = update.message.from_user.id
 
-        self.logic.start(chat_id)
+        username = update.message.from_user.full_name
 
-        update.message.reply_text('Для игры нужно 2 игрока. Для добавление игрока воспользуйтесь коммандой /add_player',
-                                  reply_to_message_id=True)
+        logic_message = self.logic.start(chat_id, user_id, username)
+
+        if self.game_mode == GameModes.with_users:
+            update.message.reply_text(logic_message, reply_to_message_id=True)
+            return
+
+        update.message.reply_text(logic_message, reply_to_message_id=True)
 
     def add_player(self, update, context):
         logger.info('Got command /add_player')
@@ -75,7 +87,9 @@ class TelegramClient:
         if self.gameover_check_and_reply(update, context):
             return
 
-        update.message.reply_text(logic_message, reply_to_message_id=True)
+        if self.game_mode == GameModes.with_users:
+            update.message.reply_text(logic_message, reply_to_message_id=True)
+            return
 
-
-telegram_client = TelegramClient()
+        for message in logic_message:
+            update.message.reply_text(message, reply_to_message_id=True)

@@ -1,8 +1,14 @@
 import logging
+import random
+
 from Game import Game
+from IPlayer import IPlayer
 from Settings import Settings
 from TelegramPlayer import TelegramPlayer
 from Settings import WordTags
+from Settings import GameModes
+from BotPlayer import BotPlayer
+from Settings import FirstWords
 
 logger = None
 
@@ -18,15 +24,31 @@ def setup_logger():
 
 
 class TelegramClientLogic:
-    def __init__(self):
+    def __init__(self, game_mode):
         setup_logger()
         self._games = {}
+        self.game_mode = game_mode
 
-    def start(self, chat_id):
+    def to_first_word(self, game):
+        player1 = game.get_current_player()
+        attack_word = random.choice(FirstWords.first_words)
+        player1.new_word(attack_word)
+        player2 = game.get_current_player()
+        return player2.get_reply_str()
+
+    def start(self, chat_id, user_id, username):
         game = self.get_or_create_game(chat_id)
         game.start()
 
         logger.info('Game started. Chat_id = {}'.format(chat_id))
+
+        if self.game_mode == GameModes.with_users:
+            return 'Для игры нужно 2 игрока. Для добавление игрока воспользуйтесь коммандой /add_player'
+
+        self.add_player(chat_id, user_id, username)
+        self.add_player(chat_id, Settings.BOT_ID, Settings.BOT_NAME)
+
+        return self.to_first_word(game)
 
     def get_or_create_game(self, chat_id: int):
         game = self._games.get(chat_id, None)
@@ -41,7 +63,12 @@ class TelegramClientLogic:
         health = Settings.player_initial_health
 
         if self.get_player(chat_id, user_id) is None:
-            player = TelegramPlayer(game, user_id, username, health)
+            if user_id == Settings.BOT_ID:
+                player = BotPlayer(game, user_id, username, health)
+
+            else:
+                player = TelegramPlayer(game, user_id, username, health)
+
             game.add_player(player)
 
         logger.info('Add new player. Chat_id = {}, username = {}, user_id = {}'.format(chat_id, username, user_id))
@@ -53,39 +80,63 @@ class TelegramClientLogic:
             if player.user_id == user_id:
                 return player
 
-    def get_message(self, text, chat_id, user_id):
+    def process_user_message(self, text, chat_id, user_id):
         game = self.get_or_create_game(chat_id)
 
         if len(game.get_players()) < 2:
             self.add_player(chat_id, user_id, text)
 
             if len(game.get_players()) == 2:
-                return 'Игра началась. Первым ходит игрок {}'.format(game.get_current_player().name)
-        else:
-            player = self.get_player(chat_id, user_id)
+                return self.to_first_word(game)
 
-            if game.get_current_player() != player:
-                return
+            return
 
-            word_checking_result = game.word_checking(text)
+        player = self.get_player(chat_id, user_id)
 
-            if word_checking_result == WordTags.not_exist:
-                logger.info("Word doesn't exist. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
-                return WordTags.not_exist
+        if game.get_current_player() != player:
+            return
 
-            if word_checking_result == WordTags.not_normal_form:
-                logger.info("Not normal form of word. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
-                return WordTags.not_normal_form
+        word_checking_result = game.word_checking(text)
 
-            if game.is_word_used(text):
-                logger.info("Word used. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
-                return 'Слово {} уже встречалось'.format(text)
+        if word_checking_result == WordTags.not_exist:
+            logger.info("Word doesn't exist. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
+            return WordTags.not_exist
 
-            player.new_word(text)
+        if word_checking_result == WordTags.not_normal_form:
+            logger.info("Not normal form of word. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
+            return WordTags.not_normal_form
 
-            attacked_player = game.get_current_player()
+        if game.is_word_used(text):
+            logger.info("Word used. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
+            return 'Слово {} уже встречалось'.format(text)
 
-            return attacked_player.get_reply_str()
+        player.new_word(text)
+
+        attacked_player = game.get_current_player()
+
+        return attacked_player.get_reply_str()
+
+    def process_bot_message(self, text, chat_id):
+        game = self.get_or_create_game(chat_id)
+        bot_player = game.get_current_player()
+        bot_player.create_new_word(text)
+        formed_word = bot_player.formed_word
+
+        return [formed_word, game.get_current_player().get_reply_str()]
+
+    def get_message(self, text, chat_id, user_id):
+        if self.game_mode == GameModes.with_users:
+            return self.process_user_message(text, chat_id, user_id)
+
+        process_user_message = self.process_user_message(text, chat_id, user_id)
+
+        if process_user_message in [None,
+                                    WordTags.not_exist,
+                                    WordTags.not_normal_form,
+                                    'Слово {} уже встречалось'.format(text)]:
+            return [process_user_message]
+
+        return [process_user_message] + self.process_bot_message(text, chat_id)
 
     def is_gameover(self, chat_id):
         game = self.get_or_create_game(chat_id)
