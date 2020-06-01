@@ -134,9 +134,14 @@ class TelegramClientLogic:
                                     WordTags.not_exist,
                                     WordTags.not_normal_form,
                                     'Слово {} уже встречалось'.format(text)]:
-            return [process_user_message]
+            return process_user_message
 
-        return [process_user_message] + self.process_bot_message(text, chat_id)
+        process_bot_message = self.process_bot_message(text, chat_id)
+
+        if process_bot_message is None:
+            return process_bot_message
+
+        return [process_user_message] + process_bot_message
 
     def is_gameover(self, chat_id):
         game = self.get_or_create_game(chat_id)

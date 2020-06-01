@@ -81,15 +81,19 @@ class TelegramClient:
 
         logic_message = self.logic.get_message(text, chat_id, user_id)
 
-        if logic_message is None:
+        if self.gameover_check_and_reply(update, context):
             return
 
-        if self.gameover_check_and_reply(update, context):
+        if logic_message is None:
             return
 
         if self.game_mode == GameModes.with_users:
             update.message.reply_text(logic_message, reply_to_message_id=True)
             return
 
-        for message in logic_message:
-            update.message.reply_text(message, reply_to_message_id=True)
+        if len(logic_message) >= 2:
+            for message in logic_message:
+                update.message.reply_text(message, reply_to_message_id=True)
+                return
+
+        update.message.reply_text(logic_message, reply_to_message_id=True)
