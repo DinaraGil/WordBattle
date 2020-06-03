@@ -21,7 +21,6 @@ Flask==1.0.2
 fourletterphat==0.1.0
 funcsigs==1.0.2
 gpiozero==1.5.1
-gyp==0.1
 idna==2.6
 ipaddress==1.0.17
 itsdangerous==0.24
