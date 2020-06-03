@@ -4,6 +4,8 @@ from IPlayer import IPlayer
 from Settings import Settings
 from pymorphy2 import MorphAnalyzer
 from Settings import WordTags
+import random
+from Settings import FirstWords
 
 
 class Game:
@@ -22,6 +24,9 @@ class Game:
         self._used_words = []
         self._gameover = False
         self._winner: IPlayer
+
+    def get_first_word(self):
+        return random.choice(FirstWords.first_words)
 
     def get_used_words(self):
         return self._used_words

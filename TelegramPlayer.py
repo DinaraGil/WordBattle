@@ -4,7 +4,7 @@ from IPlayer import IPlayer
 
 class TelegramPlayer(IPlayer):
     def __init__(self, game: Game, user_id: int, name: str, health: float):
-        super().__init__(game, name, health)
+        super().__init__(game, user_id, name, health)
         self._game: Game = game
         self._user_id = user_id
         self._username = name

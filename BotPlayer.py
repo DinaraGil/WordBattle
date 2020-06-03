@@ -9,7 +9,7 @@ import time
 
 class BotPlayer(IPlayer):
     def __init__(self, game: Game, user_id: int, name: str, health: float):
-        super().__init__(game, name, health)
+        super().__init__(game, user_id, name, health)
         self._game = game
         self._name = name
         self._reply_str = ''
@@ -56,8 +56,6 @@ class BotPlayer(IPlayer):
 
         self._formed_word = best_word.word
 
-        self.new_word(self._formed_word)
-
     @property
     def formed_word(self):
         return self._formed_word
@@ -68,6 +66,3 @@ class BotPlayer(IPlayer):
     def get_reply_str(self):
         return self._reply_str
 
-    @property
-    def user_id(self):
-        return self._user_id

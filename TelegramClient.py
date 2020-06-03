@@ -1,6 +1,6 @@
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from Settings import Settings
+from Settings import Settings, WordTags
 from TelegramClientLogic import TelegramClientLogic
 from Settings import GameModes
 
@@ -79,7 +79,7 @@ class TelegramClient:
         chat_id = update.message.chat.id
         user_id = update.message.from_user.id
 
-        logic_message = self.logic.get_message(text, chat_id, user_id)
+        logic_message = self.logic.process_user_message(text, chat_id, user_id)
 
         if self.gameover_check_and_reply(update, context):
             return
@@ -87,13 +87,14 @@ class TelegramClient:
         if logic_message is None:
             return
 
+        update.message.reply_text(logic_message, reply_to_message_id=True)
+
         if self.game_mode == GameModes.with_users:
-            update.message.reply_text(logic_message, reply_to_message_id=True)
             return
 
-        if len(logic_message) >= 2:
-            for message in logic_message:
-                update.message.reply_text(message, reply_to_message_id=True)
-                return
+        if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form]:
+            return
 
-        update.message.reply_text(logic_message, reply_to_message_id=True)
+        update.message.reply_text(self.logic.get_bot_word(chat_id, text), reply_to_message_id=True)
+
+        update.message.reply_text(self.logic.process_bot_message(chat_id), reply_to_message_id=True)

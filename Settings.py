@@ -13,6 +13,7 @@ class Settings:
 class WordTags:
     not_exist = "Такого слова не существует"
     not_normal_form = "Форма слова должна быть начальной"
+    used = 'Слово {} уже встречалось'
 
 
 class WordToBits:

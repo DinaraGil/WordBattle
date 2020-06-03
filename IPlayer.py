@@ -2,11 +2,12 @@ from abc import abstractmethod
 
 
 class IPlayer:
-    def __init__(self, game, name: str, health: float):
+    def __init__(self, game, user_id, name: str, health: float):
         self._game = game
         self._index: int = -1
         self._name: str = name
         self._health: float = health
+        self._user_id: int = user_id
 
     @property
     def game(self):
@@ -41,3 +42,7 @@ class IPlayer:
 
     def get_reply_str(self):
         pass
+
+    @property
+    def user_id(self):
+        return self._user_id

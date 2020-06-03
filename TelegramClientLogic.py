@@ -30,11 +30,15 @@ class TelegramClientLogic:
         self.game_mode = game_mode
 
     def to_first_word(self, game):
-        player1 = game.get_current_player()
-        attack_word = random.choice(FirstWords.first_words)
-        player1.new_word(attack_word)
         player2 = game.get_current_player()
-        return player2.get_reply_str()
+
+        first_word = game.get_first_word()
+
+        player2.new_word(first_word)
+
+        player1 = game.get_current_player()
+
+        return player1.get_reply_str()
 
     def start(self, chat_id, user_id, username):
         game = self.get_or_create_game(chat_id)
@@ -108,7 +112,7 @@ class TelegramClientLogic:
 
         if game.is_word_used(text):
             logger.info("Word used. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
-            return 'Слово {} уже встречалось'.format(text)
+            return WordTags.used.format(text)
 
         player.new_word(text)
 
@@ -116,32 +120,23 @@ class TelegramClientLogic:
 
         return attacked_player.get_reply_str()
 
-    def process_bot_message(self, text, chat_id):
+    def process_bot_message(self, chat_id):
         game = self.get_or_create_game(chat_id)
         bot_player = game.get_current_player()
+
+        bot_player.new_word(bot_player.formed_word)
+
+        attacked_player = game.get_current_player()
+
+        return attacked_player.get_reply_str()
+
+    def get_bot_word(self, chat_id, text):
+        game = self.get_or_create_game(chat_id)
+
+        bot_player = game.get_current_player()
         bot_player.create_new_word(text)
-        formed_word = bot_player.formed_word
 
-        return [formed_word, game.get_current_player().get_reply_str()]
-
-    def get_message(self, text, chat_id, user_id):
-        if self.game_mode == GameModes.with_users:
-            return self.process_user_message(text, chat_id, user_id)
-
-        process_user_message = self.process_user_message(text, chat_id, user_id)
-
-        if process_user_message in [None,
-                                    WordTags.not_exist,
-                                    WordTags.not_normal_form,
-                                    'Слово {} уже встречалось'.format(text)]:
-            return process_user_message
-
-        process_bot_message = self.process_bot_message(text, chat_id)
-
-        if process_bot_message is None:
-            return process_bot_message
-
-        return [process_user_message] + process_bot_message
+        return bot_player.formed_word
 
     def is_gameover(self, chat_id):
         game = self.get_or_create_game(chat_id)
