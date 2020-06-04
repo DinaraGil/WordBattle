@@ -1,1 +1,1 @@
-worker: python AliceServer.py
+web: python AliceServer.py
