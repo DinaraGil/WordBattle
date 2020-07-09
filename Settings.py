@@ -8,6 +8,8 @@ class Settings:
     REQUEST_KWARGS = {'proxy_url': 'https://163.172.189.32:8811'}
     BOT_NAME = 'Бот'
     BOT_ID = 1237582120
+    ALICE_NAME = 'Алиса'
+    ALICE_ID = 1
 
 
 class WordTags:

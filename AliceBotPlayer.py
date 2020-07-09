@@ -63,4 +63,3 @@ class BotPlayer(IPlayer):
 
     def get_reply_str(self):
         return self._reply_str
-
