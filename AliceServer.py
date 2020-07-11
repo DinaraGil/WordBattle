@@ -1,84 +1,64 @@
 from flask import Flask, request
 import logging
 import json
+from AliceLogic import AliceLogic
+from Settings import WordTags
 
 app = Flask(__name__)
 
 logger = None
 
-games = {}
+logic = AliceLogic()
 
 
 def setup_logger():
     global logger
     file_handler = logging.FileHandler('wordbattle.log', 'w', 'utf-8')
     stream_handler = logging.StreamHandler()
-    logger = logging.getLogger("TelegramClientLogic_log")
+    logger = logging.getLogger("main_log")
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
 
 
-def start():
+def start(session_id, user_id):
     logger.info('Game started')
 
-    chat_id = update.message.chat_id
-        user_id = update.message.from_user.id
+    logic_message = logic.start(session_id, user_id)
 
-        username = update.message.from_user.full_name
+    return logic_message
 
-        logic_message = self.logic.start(chat_id, user_id, username)
 
-        if self.game_mode == GameModes.with_users:
-            update.message.reply_text(logic_message, reply_to_message_id=True)
-            return
+def gameover_check(session_id):
+    if logic.is_gameover(session_id):
+        return True
+    return False
 
-        update.message.reply_text(logic_message, reply_to_message_id=True)
 
-    def add_player(self, update, context):
-        logger.info('Got command /add_player')
+def gameover_reply(session_id, user_id, text):
+    if text.lower() == 'да': #вариативность ответов
+        return start(session_id, user_id)
 
-        if self.gameover_check_and_reply(update, context):
-            return
+    return logic.get_gameover_message(session_id)
 
-        update.message.reply_text('Введите ваше имя', reply_to_message_id=True)
 
-    def gameover_check_and_reply(self, update, context):
-        chat_id = update.message.chat.id
+def get_message(session_id, user_id, text):
+    if gameover_check(session_id):
+        return gameover_reply(session_id, user_id, text)
 
-        if self.logic.is_gameover(chat_id):
-            update.message.reply_text(self.logic.get_gameover_message(chat_id), reply_to_message_id=True)
-            return True
-        return False
+    logic_message = logic.process_user_message(text, session_id, user_id)
 
-    def get_message(self, update, context):
-        if self.gameover_check_and_reply(update, context):
-            return
+    if gameover_check(session_id):
+        return gameover_reply(session_id, user_id, text)
 
-        text = update.message.text
-        chat_id = update.message.chat.id
-        user_id = update.message.from_user.id
+    if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form]:
+        return logic_message
 
-        logic_message = self.logic.process_user_message(text, chat_id, user_id)
+    logic_message += '\n' + logic.get_bot_word(session_id, text)
 
-        if self.gameover_check_and_reply(update, context):
-            return
+    logic_message += '\n' + logic.process_bot_message(session_id)
 
-        if logic_message is None:
-            return
-
-        update.message.reply_text(logic_message, reply_to_message_id=True)
-
-        if self.game_mode == GameModes.with_users:
-            return
-
-        if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form]:
-            return
-
-        update.message.reply_text(self.logic.get_bot_word(chat_id, text), reply_to_message_id=True)
-
-        update.message.reply_text(self.logic.process_bot_message(chat_id), reply_to_message_id=True)
-
+    return logic_message
 
 
 @app.route('/post', methods=['POST'])
@@ -90,99 +70,37 @@ def main():
 
     logger.info(f'Request: {request.json!r}')
 
+    req = request.json
+
     # Начинаем формировать ответ, согласно документации
     # мы собираем словарь, который потом при помощи 
     # библиотеки json преобразуем в JSON и отдадим Алисе
     response = {
-        'session': request.json['session'],
-        'version': request.json['version'],
+        'session': req['session'],
+        'version': req['version'],
         'response': {
             'end_session': False
         }
     }
 
-    # Отправляем request.json и response в функцию handle_dialog. 
-    # Она сформирует оставшиеся поля JSON, которые отвечают
-    # непосредственно за ведение диалога
-    handle_dialog(request.json, response)
+    session_id = req['session']['session_id']
+    user_id = req['session']['user']['user_id']
+
+    if req['session']['new']:
+        response['response']['text'] = start(session_id, user_id)
+
+        logger.info(f'Response:  {response!r}')
+
+        return json.dumps(response)
+
+    text = req['request']['original_utterance']
+
+    response['response']['text'] = get_message(session_id, user_id, text)
 
     logger.info(f'Response:  {response!r}')
 
     # Преобразовываем в JSON и возвращаем
     return json.dumps(response)
-
-
-def handle_dialog(req, res):
-    user_id = req['session']['user_id']
-    session_id = req['session']['session_id']
-
-    if req['session']['new']:
-        # Это новый пользователь.
-        # Инициализируем сессию и поприветствуем его.
-        # Запишем подсказки, которые мы ему покажем в первый раз
-
-        sessionStorage[user_id] = {
-            'suggests': [
-                "Не хочу.",
-                "Не буду.",
-                "Отстань!",
-            ]
-        }
-        # Заполняем текст ответа
-        res['response']['text'] = 'Привет! Купи слона!'
-        # Получим подсказки
-        res['response']['buttons'] = get_suggests(user_id)
-        return
-
-    # Сюда дойдем только, если пользователь не новый, 
-    # и разговор с Алисой уже был начат
-    # Обрабатываем ответ пользователя.
-    # В req['request']['original_utterance'] лежит весь текст,
-    # что нам прислал пользователь
-    # Если он написал 'ладно', 'куплю', 'покупаю', 'хорошо', 
-    # то мы считаем, что пользователь согласился.
-    # Подумайте, всё ли в этом фрагменте написано "красиво"?
-    if req['request']['original_utterance'].lower() in [
-        'ладно',
-        'куплю',
-        'покупаю',
-        'хорошо'
-    ]:
-        # Пользователь согласился, прощаемся.
-        res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
-        res['response']['end_session'] = True
-        return
-
-    # Если нет, то убеждаем его купить слона!
-    res['response']['text'] = \
-        f"Все говорят '{req['request']['original_utterance']}', а ты купи слона!"
-    res['response']['buttons'] = get_suggests(user_id)
-
-
-# Функция возвращает две подсказки для ответа.
-def get_suggests(user_id):
-    session = sessionStorage[user_id]
-
-    # Выбираем две первые подсказки из массива.
-    suggests = [
-        {'title': suggest, 'hide': True}
-        for suggest in session['suggests'][:2]
-    ]
-
-    # Убираем первую подсказку, чтобы подсказки менялись каждый раз.
-    session['suggests'] = session['suggests'][1:]
-    sessionStorage[user_id] = session
-
-    # Если осталась только одна подсказка, предлагаем подсказку
-    # со ссылкой на Яндекс.Маркет.
-    if len(suggests) < 2:
-        suggests.append({
-            "title": "Ладно",
-            "url": "https://market.yandex.ru/search?text=слон",
-            "hide": True
-        })
-
-    return suggests
 
 
 if __name__ == '__main__':

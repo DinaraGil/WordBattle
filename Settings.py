@@ -10,6 +10,7 @@ class Settings:
     BOT_ID = 1237582120
     ALICE_NAME = 'Алиса'
     ALICE_ID = 1
+    USERNAME = 'Человечишка'
 
 
 class WordTags:

@@ -1,13 +1,14 @@
 from Game import Game
 from IPlayer import IPlayer
+from Settings import Settings
 
 
 class AlicePlayer(IPlayer):
-    def __init__(self, game: Game, user_id: int, name: str, health: float):
-        super().__init__(game, user_id, name, health)
+    def __init__(self, game: Game, user_id: int, health: float):
+        super().__init__(game, user_id, Settings.USERNAME, health)
         self._game: Game = game
         self._user_id = user_id
-        self._username = name
+        self._username = Settings.USERNAME
         self._reply_str = ''
 
     def new_word(self, word):
