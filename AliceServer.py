@@ -3,6 +3,7 @@ import logging
 import json
 from AliceLogic import AliceLogic
 from Settings import WordTags
+import Settings
 
 app = Flask(__name__)
 
@@ -43,6 +44,9 @@ def gameover_reply(session_id, user_id, text):
 
 
 def get_message(session_id, user_id, text):
+    if text.lower() == 'помощь':
+        return Settings.HELP
+
     if gameover_check(session_id):
         return gameover_reply(session_id, user_id, text)
 
@@ -51,7 +55,7 @@ def get_message(session_id, user_id, text):
     if gameover_check(session_id):
         return gameover_reply(session_id, user_id, text)
 
-    if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form]:
+    if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form, WordTags.not_noun]:
         return logic_message
 
     logic_message += '\n' + logic.get_bot_word(session_id, text)

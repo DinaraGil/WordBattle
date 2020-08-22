@@ -6,6 +6,7 @@ from Settings import WordTags
 from BotPlayer import BotPlayer
 from AlicePlayer import AlicePlayer
 
+
 logger = None
 
 
@@ -44,7 +45,7 @@ class AliceLogic:
         self.add_player(session_id, user_id)
         self.add_player(session_id, Settings.ALICE_ID)
 
-        return self.to_first_word(game)
+        return Settings.HELP + 'Я начинаю игру. ' + self.to_first_word(game)
 
     def get_or_create_game(self, session_id: int):
         game = self._games.get(session_id, None)
@@ -94,6 +95,10 @@ class AliceLogic:
             logger.info("Not normal form of word. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
             return WordTags.not_normal_form
 
+        if word_checking_result == WordTags.not_noun:
+            logger.info("Not noun. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
+            return WordTags.not_noun
+
         if game.is_word_used(text):
             logger.info("Word used. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
             return WordTags.used.format(text)
@@ -128,5 +133,7 @@ class AliceLogic:
 
     def get_gameover_message(self, session_id):
         game = self.get_or_create_game(session_id)
-        return 'Игра окончена. Выиграл игрок {} ({} жизней). Начать заново?'.format(game.get_winner().name,
-                                                                                    game.get_winner().health)
+        if game.get_winner().name == Settings.ALICE_NAME:
+            return 'Игра окончена. Я выиграл. У меня осталолось {} жизней. Начать заново?'.format(game.get_winner().health)
+        else:
+            return 'Игра окончена. Вы выиграли. У вас осталолось {} жизней. Начать заново?'.format(game.get_winner().health)

@@ -59,7 +59,7 @@ class BotPlayer(IPlayer):
         return self._formed_word
 
     def on_attack(self, attack_word: str):
-        self._reply_str = 'Игрок {} ({}❤) атакован заклинанием "{}"'.format(self._name, self.health, attack_word)
+        self._reply_str = 'Я атакован заклинанием "{}". Жизней осталось {}'.format(attack_word, self.health)
 
     def get_reply_str(self):
         return self._reply_str

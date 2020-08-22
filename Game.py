@@ -1,7 +1,5 @@
-import sys
 from typing import List
 from IPlayer import IPlayer
-from Settings import Settings
 from pymorphy2 import MorphAnalyzer
 from Settings import WordTags
 import random
@@ -62,6 +60,9 @@ class Game:
 
         if 'Name' in parsed_word.tag:
             return WordTags.not_exist
+
+        if 'NOUN' not in parsed_word.tag:
+            return WordTags.not_noun
 
         if word.replace('ё', 'е') != parsed_word.normal_form.replace('ё', 'е'):
             return WordTags.not_normal_form
