@@ -3,7 +3,7 @@ import logging
 import json
 from AliceLogic import AliceLogic
 from Settings import WordTags
-import Settings
+from Settings import Settings
 
 app = Flask(__name__)
 
@@ -22,10 +22,10 @@ def setup_logger():
     logger.addHandler(stream_handler)
 
 
-def start(session_id, user_id):
+def start(session_id, user_id, is_session_new=True):
     logger.info('Game started')
 
-    logic_message = logic.start(session_id, user_id)
+    logic_message = logic.start(session_id, user_id, is_session_new)
 
     return logic_message
 
@@ -38,14 +38,14 @@ def gameover_check(session_id):
 
 def gameover_reply(session_id, user_id, text):
     if text.lower() == 'да': #вариативность ответов
-        return start(session_id, user_id)
+        return start(session_id, user_id, is_session_new=False)
 
     return logic.get_gameover_message(session_id)
 
 
 def get_message(session_id, user_id, text):
     if text.lower() == 'помощь':
-        return Settings.HELP
+        return Settings.HELP_MESSAGE
 
     if gameover_check(session_id):
         return gameover_reply(session_id, user_id, text)
