@@ -44,7 +44,7 @@ def gameover_reply(session_id, user_id, text):
 
 
 def get_message(session_id, user_id, text):
-    if text.lower() == 'помощь':
+    if text.lower() == 'помощь' or 'что ты умеешь?' or 'что ты умеешь':
         return Settings.HELP_MESSAGE
 
     if gameover_check(session_id):
