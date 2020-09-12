@@ -22,7 +22,7 @@ def setup_logger():
     logger.addHandler(stream_handler)
 
 
-def start(session_id, user_id, is_session_new=True):
+def start(session_id, user_id, is_session_new):
     logger.info('Game started')
 
     logic_message = logic.start(session_id, user_id, is_session_new)
@@ -38,13 +38,13 @@ def gameover_check(session_id):
 
 def gameover_reply(session_id, user_id, text):
     if text.lower() == 'да': #вариативность ответов
-        return start(session_id, user_id, is_session_new=False)
+        return start(session_id, user_id, False)
 
     return logic.get_gameover_message(session_id)
 
 
 def get_message(session_id, user_id, text):
-    if text.lower() == 'помощь' or 'что ты умеешь?' or 'что ты умеешь':
+    if text.lower() in ['помощь', 'что ты умеешь?', 'что ты умеешь']:
         return Settings.HELP_MESSAGE
 
     if gameover_check(session_id):
@@ -91,7 +91,7 @@ def main():
     user_id = req['session']['user']['user_id']
 
     if req['session']['new']:
-        response['response']['text'] = start(session_id, user_id)
+        response['response']['text'] = start(session_id, user_id, True)
 
         logger.info(f'Response:  {response!r}')
 

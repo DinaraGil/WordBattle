@@ -36,7 +36,7 @@ class AliceLogic:
 
         return player1.get_reply_str()
 
-    def start(self, session_id, user_id, is_session_new=True):
+    def start(self, session_id, user_id, is_session_new):
         game = self.get_or_create_game(session_id)
         game.start()
 
@@ -46,7 +46,7 @@ class AliceLogic:
         self.add_player(session_id, Settings.ALICE_ID)
 
         if is_session_new:
-            return Settings.HELP_MESSAGE + 'Я начинаю игру. ' + self.to_first_word(game)
+            return Settings.HELP_MESSAGE + '\n Я начинаю игру. ' + self.to_first_word(game)
 
         return 'Я начинаю игру. ' + self.to_first_word(game)
 
