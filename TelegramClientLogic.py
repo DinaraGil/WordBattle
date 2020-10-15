@@ -130,6 +130,9 @@ class TelegramClientLogic:
 
         bot_player.new_word(bot_player.formed_word)
 
+        if self.is_gameover(chat_id):
+            return self.get_gameover_message(chat_id)
+
         attacked_player = game.get_current_player()
 
         return attacked_player.get_reply_str()

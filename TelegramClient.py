@@ -84,6 +84,8 @@ class TelegramClient:
             return
 
         text = update.message.text
+
+        logging.info('Entering text {}'.format(text))
         chat_id = update.message.chat.id
         user_id = update.message.from_user.id
 
@@ -105,7 +107,8 @@ class TelegramClient:
         if self.game_mode == GameModes.with_users:
             return
 
-        if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form]:
+        if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form,
+                             WordTags.not_noun]:
             return
 
         update.message.reply_text(self.logic.get_bot_word(chat_id, self.game_level), reply_to_message_id=True)
