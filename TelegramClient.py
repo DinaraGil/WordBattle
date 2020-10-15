@@ -20,13 +20,17 @@ def setup_logger():
 class TelegramClient:
     def __init__(self, game_mode):
         self.game_mode = game_mode
+        self.game_level = 1
 
         setup_logger()
 
-        self._updater = Updater(Settings.TOKEN, use_context=True, request_kwargs=Settings.REQUEST_KWARGS)
+        self._updater = Updater(Settings.TOKEN, use_context=True) #request_kwargs=Settings.REQUEST_KWARGS)
 
         dp = self._updater.dispatcher
         dp.add_handler(CommandHandler("start", self.start))
+
+        if self.game_mode == GameModes.with_bot:
+            dp.add_handler(CommandHandler("choose_level", self.choose_level))
 
         if self.game_mode == GameModes.with_users:
             dp.add_handler(CommandHandler('add_player', self.add_player))
@@ -49,11 +53,15 @@ class TelegramClient:
 
         logic_message = self.logic.start(chat_id, user_id, username)
 
-        if self.game_mode == GameModes.with_users:
-            update.message.reply_text(logic_message, reply_to_message_id=True)
-            return
+        # if self.game_mode == GameModes.with_users:
+        #     update.message.reply_text(logic_message, reply_to_message_id=True)
+        #     return
 
         update.message.reply_text(logic_message, reply_to_message_id=True)
+
+    def choose_level(self, update, context):
+        logger.info('Got command /start')
+        update.message.reply_text('Выберите уровень: 1, 2, 3', reply_to_message_id=True)
 
     def add_player(self, update, context):
         logger.info('Got command /add_player')
@@ -79,6 +87,11 @@ class TelegramClient:
         chat_id = update.message.chat.id
         user_id = update.message.from_user.id
 
+        if self.game_mode == GameModes.with_bot:
+            if text in ['1', '2', '3']:
+                self.game_level = int(text)
+                return
+
         logic_message = self.logic.process_user_message(text, chat_id, user_id)
 
         if self.gameover_check_and_reply(update, context):
@@ -95,6 +108,6 @@ class TelegramClient:
         if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form]:
             return
 
-        update.message.reply_text(self.logic.get_bot_word(chat_id, text), reply_to_message_id=True)
+        update.message.reply_text(self.logic.get_bot_word(chat_id, self.game_level), reply_to_message_id=True)
 
         update.message.reply_text(self.logic.process_bot_message(chat_id), reply_to_message_id=True)

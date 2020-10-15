@@ -137,6 +137,6 @@ class AliceLogic:
     def get_gameover_message(self, session_id):
         game = self.get_or_create_game(session_id)
         if game.get_winner().name == Settings.ALICE_NAME:
-            return 'Игра окончена. Я выиграл. У меня осталолось {} жизней. Начать заново?'.format(game.get_winner().health)
+            return 'Игра окончена. Я выиграл. У меня осталось {} жизней. Начать заново?'.format(game.get_winner().health)
         else:
-            return 'Игра окончена. Вы выиграли. У вас осталолось {} жизней. Начать заново?'.format(game.get_winner().health)
+            return 'Игра окончена. Вы выиграли. У вас осталось {} жизней. Начать заново?'.format(game.get_winner().health)

@@ -114,6 +114,10 @@ class TelegramClientLogic:
             logger.info("Word used. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
             return WordTags.used.format(text)
 
+        if word_checking_result == WordTags.not_noun:
+            logger.info("Not noun. Chat_id = {}, word = {}, user_id = {}".format(chat_id, text, user_id))
+            return WordTags.not_noun
+
         player.new_word(text)
 
         attacked_player = game.get_current_player()
@@ -130,11 +134,11 @@ class TelegramClientLogic:
 
         return attacked_player.get_reply_str()
 
-    def get_bot_word(self, chat_id, text):
+    def get_bot_word(self, chat_id, game_level):
         game = self.get_or_create_game(chat_id)
 
         bot_player = game.get_current_player()
-        bot_player.create_new_word(text)
+        bot_player.create_new_word(game_level) #text
 
         return bot_player.formed_word
 

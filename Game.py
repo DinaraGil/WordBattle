@@ -51,21 +51,37 @@ class Game:
         if not word.isalpha():
             return WordTags.not_exist
 
-        word = word.lower()
+        if len(word) == 1:
+            return WordTags.not_exist
+
+        word = word.lower().replace('ё', 'е')
+
+        for letter in word:
+            if letter not in 'абвгдежзийклмнопрстуфхцчшщъыьэюя':
+                return WordTags.not_exist
+
         morph = MorphAnalyzer()
         parsed_word = morph.parse(word)[0]
+        tags = parsed_word.tag
+        methods_stack = parsed_word.methods_stack
+        methods_stack_zero = list(map(str, list(methods_stack[0]))) #instatce of
 
-        if len(parsed_word.methods_stack) >= 2:
+        if len(methods_stack) >= 2:
             return WordTags.not_exist
 
-        if 'Name' in parsed_word.tag:
-            return WordTags.not_exist
+        if word != parsed_word.normal_form.replace('ё', 'е'):
+            return WordTags.not_normal_form
 
-        if 'NOUN' not in parsed_word.tag:
+        not_noun_marks = ['UNKN', 'Abbr', 'Orgn', 'Surn', 'Patr', 'Geox', 'Name', 'Trad']
+        for mark in not_noun_marks:
+            if mark in tags:
+                return WordTags.not_exist
+
+        if ('NOUN' not in tags) and ('Subx' not in tags):
             return WordTags.not_noun
 
-        if word.replace('ё', 'е') != parsed_word.normal_form.replace('ё', 'е'):
-            return WordTags.not_normal_form
+        if '<FakeDictionary>' in methods_stack_zero or '<UnknAnalyzer>' in methods_stack_zero:
+            return WordTags.not_exist
 
     def is_word_used(self, word):
         if word.lower() in self._used_words:

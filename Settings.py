@@ -5,7 +5,7 @@ import random
 class Settings:
     player_initial_health: float = 10
     TOKEN = '1237582120:AAHgVWV0UrKKm6cvaYHLqEI7dk0JKw2zNnA'
-    REQUEST_KWARGS = {'proxy_url': 'https://163.172.189.32:8811'}
+    #REQUEST_KWARGS = {'proxy_url': 'https://163.172.189.32:8811'}
     BOT_NAME = 'Бот'
     BOT_ID = 1237582120
     ALICE_NAME = 'Я'
@@ -14,8 +14,23 @@ class Settings:
     HELP_MESSAGE = 'Вы запустили навык "Заклинатель слов". Это приватный навык. Правила игры: мы по очереди атакуем друг друга словами. ' \
            'Каждое последующее слово должно содержать буквы предыдущего, в любом порядке.' \
            'В начале игры каждый имеет десять пунктов здоровья.' \
-           'Если при защите, ваше слово не содержит все буквы предыдущего, вам нанонится урон в размере количества пропущенных букв.' \
+           'Если при защите, ваше слово не содержит все буквы предыдущего, вам наносится урон в размере количества пропущенных букв.' \
            'Слово должно быть существительным, в начальной форме. Для повторения правил скажите "Помощь" или "Что ты умеешь?".'
+    LEN_MARKS = [0, 37, 421, 1792, 4796, 8985, 14329, 20040, 25421, 29835, 33431, 36125, 38228, 39746,
+                 40558, 41080, 41353, 41519, 41604, 41648, 41667, 41676, 41678, 41679]
+
+
+def create_range_of_indexes(word):
+    range_of_indexes = []
+
+    if len(word) <= 1:
+        range_of_indexes = list(range(0, Settings.LEN_MARKS[2] + 1))
+    elif len(word) > len(Settings.LEN_MARKS):
+        range_of_indexes = list(range(0, Settings.LEN_MARKS[-1] + 1))
+    else:
+        range_of_indexes = list(range(0, Settings.LEN_MARKS[len(word)] + 1))
+
+    return range_of_indexes
 
 
 class WordTags:
@@ -26,17 +41,21 @@ class WordTags:
 
 
 class WordToBits:
-    with open('data/russian_nouns_sorted_by_len.txt', 'r', encoding='utf-8') as file:
-        words = file.read().splitlines()
+    # with open('data/russian_nouns_sorted_by_len.txt', 'r', encoding='utf-8') as file:
+    with open('data/nouns_from_pymorphy.txt', 'r', encoding='utf-8') as file:
+        words_second_level = file.read().splitlines()
 
-    BIN_WORDS = []
-    for word in words:
-        BIN_WORDS.append(Word(word))
+    with open('data/freq_nouns_sorted_by_len.txt', 'r', encoding='utf-8') as file:
+        words_first_level = file.read().splitlines()
 
+    WORDS_FIRST_LEVEL = []
+    WORDS_SECOND_LEVEL = []
 
-class LenMarks:
-    LEN_MARKS = [0, 54, 524, 2129, 5602, 10432, 16746, 23602, 30169, 35627, 40162, 43640, 46349, 48313,
-                 49405, 50076, 50423, 50640, 50752, 50810, 50838, 50849]
+    for word in words_first_level:
+        WORDS_FIRST_LEVEL.append(Word(word))
+
+    for word in words_second_level:
+        WORDS_SECOND_LEVEL.append(Word(word))
 
 
 class GameModes:
