@@ -1,38 +1,53 @@
 import random
 from Settings import WordToBits
 from Settings import Settings
+from typing import Optional
 
 
 class Level:
     def __init__(self, random_index, random_word):
-        self.random_index = 0
-        self.random_word = ''
+        self.random_index = random_index
+        self.random_word = random_word
 
-    @property
     def get_random_index(self):
         return self.random_index
 
-    @property
     def get_random_word(self):
         return self.random_word
 
 
 class First_level(Level):
     def __init__(self):
-        range_of_indexes = list(range(0, Settings.LEN_MARKS[4] + 1))
-        random_index = random.choice(range_of_indexes)
+        self.range_of_indexes = list(range(0, Settings.LEN_MARKS[4] + 1))
+        random_index = random.choice(self.range_of_indexes)
         random_word = WordToBits.WORDS_SECOND_LEVEL[random_index]
 
         super().__init__(random_index, random_word)
+
+    def get_random_index(self):
+        random_index = random.choice(self.range_of_indexes)
+        return random_index
+
+    def get_random_word(self):
+        random_word = WordToBits.WORDS_SECOND_LEVEL[self.get_random_index()]
+        return random_word
 
 
 class Second_level(Level):
     def __init__(self):
-        range_of_indexes = list(range(0, Settings.LEN_MARKS[6] + 1))
-        random_index = random.choice(range_of_indexes)
+        self.range_of_indexes = list(range(0, Settings.LEN_MARKS[6] + 1))
+        random_index = random.choice(self.range_of_indexes)
         random_word = WordToBits.WORDS_SECOND_LEVEL[random_index]
 
         super().__init__(random_index, random_word)
+
+    def get_random_index(self):
+        random_index = random.choice(self.range_of_indexes)
+        return random_index
+
+    def get_random_word(self):
+        random_word = WordToBits.WORDS_SECOND_LEVEL[self.get_random_index()]
+        return random_word
 
 
 class Third_level(Level):
@@ -41,3 +56,25 @@ class Third_level(Level):
         random_word = WordToBits.WORDS_SECOND_LEVEL[random_index]
 
         super().__init__(random_index, random_word)
+
+    def get_random_index(self):
+        random_index = random.randint(0, len(WordToBits.WORDS_SECOND_LEVEL) - 1)
+        return random_index
+
+    def get_random_word(self):
+        random_word = WordToBits.WORDS_SECOND_LEVEL[self.get_random_index()]
+        return random_word
+
+
+class Game_Level:
+    def __init__(self, level_number):
+        self.level: Optional[Level] = None
+        if level_number == 1:
+            self.level = First_level()
+        elif level_number == 2:
+            self.level = Second_level()
+        elif level_number == 3:
+            self.level = Third_level()
+
+    def get_level(self):
+        return self.level

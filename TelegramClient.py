@@ -3,6 +3,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from Settings import Settings, WordTags
 from TelegramClientLogic import TelegramClientLogic
 from Settings import GameModes
+from Level import Game_Level, First_level
 
 logger = None
 
@@ -20,7 +21,6 @@ def setup_logger():
 class TelegramClient:
     def __init__(self, game_mode):
         self.game_mode = game_mode
-        self.game_level = 1
 
         setup_logger()
 
@@ -60,7 +60,7 @@ class TelegramClient:
         update.message.reply_text(logic_message, reply_to_message_id=True)
 
     def choose_level(self, update, context):
-        logger.info('Got command /start')
+        logger.info('Got command /choose_level')
         update.message.reply_text('Выберите уровень: 1, 2, 3', reply_to_message_id=True)
 
     def add_player(self, update, context):
@@ -89,10 +89,13 @@ class TelegramClient:
         chat_id = update.message.chat.id
         user_id = update.message.from_user.id
 
+        level = Game_Level(1).get_level()
+
         if self.game_mode == GameModes.with_bot:
-            if text in ['1', '2', '3']:
-                self.game_level = int(text)
-                return
+            if text.isdigit():
+                if int(text) in Settings.AVAILABLE_LEVELS:
+                    level = Game_Level(int(text)).get_level()
+                    return
 
         logic_message = self.logic.process_user_message(text, chat_id, user_id)
 
@@ -111,6 +114,6 @@ class TelegramClient:
                              WordTags.not_noun]:
             return
 
-        update.message.reply_text(self.logic.get_bot_word(chat_id, self.game_level), reply_to_message_id=True)
+        update.message.reply_text(self.logic.get_bot_word(chat_id, level), reply_to_message_id=True)
 
         update.message.reply_text(self.logic.process_bot_message(chat_id), reply_to_message_id=True)

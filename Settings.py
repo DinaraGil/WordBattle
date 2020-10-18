@@ -18,19 +18,19 @@ class Settings:
            'Слово должно быть существительным, в начальной форме. Для повторения правил скажите "Помощь" или "Что ты умеешь?".'
     LEN_MARKS = [0, 37, 421, 1792, 4796, 8985, 14329, 20040, 25421, 29835, 33431, 36125, 38228, 39746,
                  40558, 41080, 41353, 41519, 41604, 41648, 41667, 41676, 41678, 41679]
+    AVAILABLE_LEVELS = [1, 2, 3]
 
-
-def create_range_of_indexes(word):
-    range_of_indexes = []
-
-    if len(word) <= 1:
-        range_of_indexes = list(range(0, Settings.LEN_MARKS[2] + 1))
-    elif len(word) > len(Settings.LEN_MARKS):
-        range_of_indexes = list(range(0, Settings.LEN_MARKS[-1] + 1))
-    else:
-        range_of_indexes = list(range(0, Settings.LEN_MARKS[len(word)] + 1))
-
-    return range_of_indexes
+# def create_range_of_indexes(word):
+#     range_of_indexes = []
+#
+#     if len(word) <= 1:
+#         range_of_indexes = list(range(0, Settings.LEN_MARKS[2] + 1))
+#     elif len(word) > len(Settings.LEN_MARKS):
+#         range_of_indexes = list(range(0, Settings.LEN_MARKS[-1] + 1))
+#     else:
+#         range_of_indexes = list(range(0, Settings.LEN_MARKS[len(word)] + 1))
+#
+#     return range_of_indexes
 
 
 class WordTags:

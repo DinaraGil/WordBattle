@@ -137,11 +137,11 @@ class TelegramClientLogic:
 
         return attacked_player.get_reply_str()
 
-    def get_bot_word(self, chat_id, game_level):
+    def get_bot_word(self, chat_id, level):
         game = self.get_or_create_game(chat_id)
 
         bot_player = game.get_current_player()
-        bot_player.create_new_word(game_level) #text
+        bot_player.create_new_word(level) #text
 
         return bot_player.formed_word
 
