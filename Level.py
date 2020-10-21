@@ -16,7 +16,7 @@ class Level:
         return self.random_word
 
 
-class First_level(Level):
+class FirstLevel(Level):
     def __init__(self):
         self.range_of_indexes = list(range(0, Settings.LEN_MARKS[4] + 1))
         random_index = random.choice(self.range_of_indexes)
@@ -33,7 +33,7 @@ class First_level(Level):
         return random_word
 
 
-class Second_level(Level):
+class SecondLevel(Level):
     def __init__(self):
         self.range_of_indexes = list(range(0, Settings.LEN_MARKS[6] + 1))
         random_index = random.choice(self.range_of_indexes)
@@ -50,7 +50,7 @@ class Second_level(Level):
         return random_word
 
 
-class Third_level(Level):
+class ThirdLevel(Level):
     def __init__(self):
         random_index = random.randint(0, len(WordToBits.WORDS_SECOND_LEVEL) - 1)
         random_word = WordToBits.WORDS_SECOND_LEVEL[random_index]
@@ -66,15 +66,15 @@ class Third_level(Level):
         return random_word
 
 
-class Game_Level:
+class GameLevel:
     def __init__(self, level_number):
         self.level: Optional[Level] = None
         if level_number == 1:
-            self.level = First_level()
+            self.level = FirstLevel()
         elif level_number == 2:
-            self.level = Second_level()
+            self.level = SecondLevel()
         elif level_number == 3:
-            self.level = Third_level()
+            self.level = ThirdLevel()
 
     def get_level(self):
         return self.level

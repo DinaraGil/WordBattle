@@ -3,7 +3,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from Settings import Settings, WordTags
 from TelegramClientLogic import TelegramClientLogic
 from Settings import GameModes
-from Level import Game_Level, First_level
+from Level import GameLevel, FirstLevel
 
 logger = None
 
@@ -38,6 +38,7 @@ class TelegramClient:
         dp.add_handler(MessageHandler(Filters.text, self.get_message))
 
         self.logic = TelegramClientLogic(game_mode)
+        self.level = GameLevel(int(1)).get_level()
 
         self._updater.start_polling()
 
@@ -89,12 +90,10 @@ class TelegramClient:
         chat_id = update.message.chat.id
         user_id = update.message.from_user.id
 
-        level = Game_Level(1).get_level()
-
         if self.game_mode == GameModes.with_bot:
             if text.isdigit():
                 if int(text) in Settings.AVAILABLE_LEVELS:
-                    level = Game_Level(int(text)).get_level()
+                    self.level = GameLevel(int(text)).get_level()
                     return
 
         logic_message = self.logic.process_user_message(text, chat_id, user_id)
@@ -114,6 +113,6 @@ class TelegramClient:
                              WordTags.not_noun]:
             return
 
-        update.message.reply_text(self.logic.get_bot_word(chat_id, level), reply_to_message_id=True)
+        update.message.reply_text(self.logic.get_bot_word(chat_id, self.level), reply_to_message_id=True)
 
         update.message.reply_text(self.logic.process_bot_message(chat_id), reply_to_message_id=True)

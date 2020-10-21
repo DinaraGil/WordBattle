@@ -1,4 +1,4 @@
-from Level import Game_Level
+from Level import GameLevel
 from Settings import Word
 from typing import Optional
 
@@ -14,7 +14,7 @@ def create_bot_word(game, attack_word, level):  # attack_word
     random_word: Optional[Word] = None
     random_index = 0
 
-    while len(used_indexes) != 50:
+    while len(used_indexes) != 100:
         if random_index in used_indexes:
             continue
 
