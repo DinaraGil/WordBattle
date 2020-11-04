@@ -15,13 +15,13 @@ def create_bot_word(game, attack_word, level):  # attack_word
     random_index = 0
 
     while len(used_indexes) != 100:
+        random_index = level.get_random_index()
+        random_word = level.get_random_word()
+
         if random_index in used_indexes:
             continue
 
         used_indexes.append(random_index)
-
-        random_index = level.get_random_index()
-        random_word = level.get_random_word()
 
         if attack_word == '':
             best_word = random_word
@@ -45,5 +45,3 @@ def create_bot_word(game, attack_word, level):  # attack_word
 
     formed_word = best_word.word
     return formed_word
-
-

@@ -17,7 +17,7 @@ class TestCreateBotWord(unittest.TestCase):
         game.add_player(bot_player)
         game.add_player(player)
         
-        level = GameLevel(3).get_level()
+        level = GameLevel(1).get_level()
         
         for i in range(5):
             player.new_word(input())

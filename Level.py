@@ -20,7 +20,7 @@ class FirstLevel(Level):
     def __init__(self):
         self.range_of_indexes = list(range(0, Settings.LEN_MARKS[4] + 1))
         random_index = random.choice(self.range_of_indexes)
-        random_word = WordToBits.WORDS_SECOND_LEVEL[random_index]
+        random_word = WordToBits.BIN_WORDS[random_index]
 
         super().__init__(random_index, random_word)
 
@@ -29,7 +29,7 @@ class FirstLevel(Level):
         return random_index
 
     def get_random_word(self):
-        random_word = WordToBits.WORDS_SECOND_LEVEL[self.get_random_index()]
+        random_word = WordToBits.BIN_WORDS[self.get_random_index()]
         return random_word
 
 
@@ -37,7 +37,7 @@ class SecondLevel(Level):
     def __init__(self):
         self.range_of_indexes = list(range(0, Settings.LEN_MARKS[6] + 1))
         random_index = random.choice(self.range_of_indexes)
-        random_word = WordToBits.WORDS_SECOND_LEVEL[random_index]
+        random_word = WordToBits.BIN_WORDS[random_index]
 
         super().__init__(random_index, random_word)
 
@@ -46,23 +46,23 @@ class SecondLevel(Level):
         return random_index
 
     def get_random_word(self):
-        random_word = WordToBits.WORDS_SECOND_LEVEL[self.get_random_index()]
+        random_word = WordToBits.BIN_WORDS[self.get_random_index()]
         return random_word
 
 
 class ThirdLevel(Level):
     def __init__(self):
-        random_index = random.randint(0, len(WordToBits.WORDS_SECOND_LEVEL) - 1)
-        random_word = WordToBits.WORDS_SECOND_LEVEL[random_index]
+        random_index = random.randint(0, len(WordToBits.BIN_WORDS) - 1)
+        random_word = WordToBits.BIN_WORDS[random_index]
 
         super().__init__(random_index, random_word)
 
     def get_random_index(self):
-        random_index = random.randint(0, len(WordToBits.WORDS_SECOND_LEVEL) - 1)
+        random_index = random.randint(0, len(WordToBits.BIN_WORDS) - 1)
         return random_index
 
     def get_random_word(self):
-        random_word = WordToBits.WORDS_SECOND_LEVEL[self.get_random_index()]
+        random_word = WordToBits.BIN_WORDS[self.get_random_index()]
         return random_word
 
 

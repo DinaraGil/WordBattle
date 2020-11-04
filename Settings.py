@@ -43,19 +43,12 @@ class WordTags:
 class WordToBits:
     # with open('data/russian_nouns_sorted_by_len.txt', 'r', encoding='utf-8') as file:
     with open('data/nouns_from_pymorphy.txt', 'r', encoding='utf-8') as file:
-        words_second_level = file.read().splitlines()
+        words = file.read().splitlines()
 
-    with open('data/freq_nouns_sorted_by_len.txt', 'r', encoding='utf-8') as file:
-        words_first_level = file.read().splitlines()
+    BIN_WORDS = []
 
-    WORDS_FIRST_LEVEL = []
-    WORDS_SECOND_LEVEL = []
-
-    for word in words_first_level:
-        WORDS_FIRST_LEVEL.append(Word(word))
-
-    for word in words_second_level:
-        WORDS_SECOND_LEVEL.append(Word(word))
+    for word in words:
+        BIN_WORDS.append(Word(word))
 
 
 class GameModes:

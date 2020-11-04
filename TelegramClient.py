@@ -38,7 +38,7 @@ class TelegramClient:
         dp.add_handler(MessageHandler(Filters.text, self.get_message))
 
         self.logic = TelegramClientLogic(game_mode)
-        self.level = GameLevel(int(1)).get_level()
+        self.level = GameLevel(1).get_level()
 
         self._updater.start_polling()
 
