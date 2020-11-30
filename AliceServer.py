@@ -4,12 +4,11 @@ import json
 from AliceLogic import AliceLogic
 from Settings import WordTags
 from Settings import Settings
+from Level import GameLevel
 
 app = Flask(__name__)
 
 logger = None
-
-logic = AliceLogic()
 
 
 def setup_logger():
@@ -22,47 +21,66 @@ def setup_logger():
     logger.addHandler(stream_handler)
 
 
-def start(session_id, user_id, is_session_new):
-    logger.info('Game started')
+class AliceServer:
+    def __init__(self, logger):
+        self.logger = logger
+        self.logic = AliceLogic()
+        self.level = GameLevel(1).get_level()
+        self.is_level_chosen = False
 
-    logic_message = logic.start(session_id, user_id, is_session_new)
+    def start(self, session_id, user_id, is_session_new):
+        self.logger.info('Game started')
 
-    return logic_message
+        self.level = GameLevel(1).get_level()
+        self.is_level_chosen = False
 
+        logic_message = self.logic.start(session_id, user_id, is_session_new)
 
-def gameover_check(session_id):
-    if logic.is_gameover(session_id):
-        return True
-    return False
-
-
-def gameover_reply(session_id, user_id, text):
-    if text.lower() == 'да': #вариативность ответов
-        return start(session_id, user_id, False)
-
-    return logic.get_gameover_message(session_id)
-
-
-def get_message(session_id, user_id, text):
-    if text.lower() in ['помощь', 'что ты умеешь?', 'что ты умеешь']:
-        return Settings.HELP_MESSAGE
-
-    if gameover_check(session_id):
-        return gameover_reply(session_id, user_id, text)
-
-    logic_message = logic.process_user_message(text, session_id, user_id)
-
-    if gameover_check(session_id):
-        return gameover_reply(session_id, user_id, text)
-
-    if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form, WordTags.not_noun]:
         return logic_message
 
-    logic_message += '\n' + logic.get_bot_word(session_id, text)
+    def gameover_check(self, session_id):
+        if self.logic.is_gameover(session_id):
+            return True
+        return False
 
-    logic_message += '\n' + logic.process_bot_message(session_id)
+    def gameover_reply(self, session_id, user_id, text):
+        if text.lower() == 'да': #вариативность ответов
+            return self.start(session_id, user_id, False)
 
-    return logic_message
+        return self.logic.get_gameover_message(session_id)
+
+    def get_message(self, session_id, user_id, text):
+        if text.lower() in ['помощь', 'что ты умеешь?', 'что ты умеешь']:
+            return Settings.HELP_MESSAGE
+
+        if text.lower() in ['1 уровень', '2 уровень', '3 уровень'] and not self.is_level_chosen:
+            if text.lower() == '1 уровень':
+                self.level = GameLevel(1).get_level()
+            elif text.lower() == '2 уровень': #говнокод
+                self.level = GameLevel(2).get_level()
+            elif text.lower() == '3 уровень':
+                self.level = GameLevel(3).get_level()
+            self.is_level_chosen = True
+            return self.logic.to_first_word(session_id)
+        elif not self.is_level_chosen:
+            return 'Пожалуйста выберите уровень'
+
+        if self.gameover_check(session_id):
+            return self.gameover_reply(session_id, user_id, text)
+
+        logic_message = self.logic.process_user_message(text, session_id, user_id)
+
+        if self.gameover_check(session_id):
+            return self.gameover_reply(session_id, user_id, text)
+
+        if logic_message in [WordTags.not_exist, WordTags.used.format(text), WordTags.not_normal_form, WordTags.not_noun]:
+            return logic_message
+
+        logic_message += '\n' + self.logic.get_bot_word(session_id, self.level)
+
+        logic_message += '\n' + self.logic.process_bot_message(session_id)
+
+        return logic_message
 
 
 @app.route('/post', methods=['POST'])
@@ -73,6 +91,8 @@ def main():
     setup_logger()
 
     logger.info(f'Request: {request.json!r}')
+
+    server = AliceServer(logger)
 
     req = request.json
 
@@ -91,7 +111,7 @@ def main():
     user_id = req['session']['user']['user_id']
 
     if req['session']['new']:
-        response['response']['text'] = start(session_id, user_id, True)
+        response['response']['text'] = server.start(session_id, user_id, True)
 
         logger.info(f'Response:  {response!r}')
 
@@ -99,7 +119,7 @@ def main():
 
     text = req['request']['original_utterance']
 
-    response['response']['text'] = get_message(session_id, user_id, text)
+    response['response']['text'] = server.get_message(session_id, user_id, text)
 
     logger.info(f'Response:  {response!r}')
 

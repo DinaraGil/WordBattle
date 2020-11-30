@@ -5,6 +5,7 @@ from Settings import Settings
 from Settings import WordTags
 from BotPlayer import BotPlayer
 from AlicePlayer import AlicePlayer
+from AliceBotPlayer import BotPlayer
 
 
 logger = None
@@ -25,13 +26,12 @@ class AliceLogic:
         setup_logger()
         self._games = {}
 
-    def to_first_word(self, game):
+    def to_first_word(self, session_id):
+        game = self.get_or_create_game(session_id)
+
         player2 = game.get_current_player()
-
         first_word = game.get_first_word()
-
         player2.new_word(first_word)
-
         player1 = game.get_current_player()
 
         return player1.get_reply_str()
@@ -46,9 +46,9 @@ class AliceLogic:
         self.add_player(session_id, Settings.ALICE_ID)
 
         if is_session_new:
-            return Settings.HELP_MESSAGE + '\n Я начинаю игру. ' + self.to_first_word(game)
+            return Settings.HELP_MESSAGE + '\n Выберите уровень.' # + self.to_first_word(game)
 
-        return 'Я начинаю игру. ' + self.to_first_word(game)
+        return 'Выберите уровень.' # + self.to_first_word(game)
 
     def get_or_create_game(self, session_id: int):
         game = self._games.get(session_id, None)
@@ -118,15 +118,18 @@ class AliceLogic:
 
         bot_player.new_word(bot_player.formed_word)
 
+        if self.is_gameover(session_id):
+            return self.get_gameover_message(session_id)
+
         attacked_player = game.get_current_player()
 
         return attacked_player.get_reply_str()
 
-    def get_bot_word(self, session_id, text):
+    def get_bot_word(self, session_id, level):
         game = self.get_or_create_game(session_id)
 
         bot_player = game.get_current_player()
-        bot_player.create_new_word(text)
+        bot_player.create_new_word(level) #text
 
         return bot_player.formed_word
 
