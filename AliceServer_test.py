@@ -20,7 +20,7 @@ class TestAliceServer(unittest.TestCase):
         setup_logger()
         server = AliceServer(logger)
         session_id = 1
-        user_id = 1
+        user_id = 12345
         print(server.start(session_id, user_id, is_session_new=True))
         text = input()
         print(server.get_message(session_id, user_id, text))

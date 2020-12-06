@@ -3,7 +3,6 @@ import logging
 from Game import Game
 from Settings import Settings
 from Settings import WordTags
-from BotPlayer import BotPlayer
 from AlicePlayer import AlicePlayer
 from AliceBotPlayer import BotPlayer
 
@@ -65,7 +64,6 @@ class AliceLogic:
         if self.get_player(session_id, user_id) is None:
             if user_id == Settings.ALICE_ID:
                 player = BotPlayer(game, user_id, Settings.ALICE_NAME, health)
-
             else:
                 player = AlicePlayer(game, user_id, health)
 

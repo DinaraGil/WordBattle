@@ -54,16 +54,16 @@ class AliceServer:
             return Settings.HELP_MESSAGE
 
         if text.lower() in ['1 уровень', '2 уровень', '3 уровень'] and not self.is_level_chosen:
-            if text.lower() == '1 уровень':
+            if text.lower() == '1 уровень': #изменить на нормальный подход
                 self.level = GameLevel(1).get_level()
-            elif text.lower() == '2 уровень': #говнокод
+            elif text.lower() == '2 уровень':
                 self.level = GameLevel(2).get_level()
             elif text.lower() == '3 уровень':
                 self.level = GameLevel(3).get_level()
             self.is_level_chosen = True
             return self.logic.to_first_word(session_id)
         elif not self.is_level_chosen:
-            return 'Пожалуйста выберите уровень'
+            return 'Выберите уровень'
 
         if self.gameover_check(session_id):
             return self.gameover_reply(session_id, user_id, text)
