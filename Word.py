@@ -25,4 +25,3 @@ class Word:
     @property
     def word(self):
         return self._word
-

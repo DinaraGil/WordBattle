@@ -27,16 +27,17 @@ class AliceServer:
         self.logic = AliceLogic()
         self.level = GameLevel(1).get_level()
         self.is_level_chosen = False
+        self.is_new_game = True
 
-    def start(self, session_id, user_id, is_session_new):
+    def start(self, session_id, user_id):
         self.logger.info('Game started')
 
         self.level = GameLevel(1).get_level()
         self.is_level_chosen = False
 
-        logic_message = self.logic.start(session_id, user_id, is_session_new)
+        self.logic.start(session_id, user_id) #logic_message
 
-        return logic_message
+        # return logic_message
 
     def gameover_check(self, session_id):
         if self.logic.is_gameover(session_id):
@@ -45,7 +46,8 @@ class AliceServer:
 
     def gameover_reply(self, session_id, user_id, text):
         if text.lower() == 'да': #вариативность ответов
-            return self.start(session_id, user_id, False)
+            self.start(session_id, user_id)
+            return 'Выберите уровень'
 
         return self.logic.get_gameover_message(session_id)
 
@@ -54,6 +56,7 @@ class AliceServer:
             return Settings.HELP_MESSAGE
 
         if text.lower() in ['1 уровень', '2 уровень', '3 уровень'] and not self.is_level_chosen:
+            self.start(session_id, user_id)
             if text.lower() == '1 уровень':
                 self.level = GameLevel(1).get_level()
             elif text.lower() == '2 уровень': #говнокод
@@ -111,7 +114,7 @@ def main():
     user_id = req['session']['user']['user_id']
 
     if req['session']['new']:
-        response['response']['text'] = server.start(session_id, user_id, True)
+        response['response']['text'] = Settings.HELP_MESSAGE + '\n Выберите уровень.'
 
         logger.info(f'Response:  {response!r}')
 
