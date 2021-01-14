@@ -7,27 +7,11 @@ from AlicePlayer import AlicePlayer
 from AliceBotPlayer import BotPlayer
 
 
-logger = None
-
-
-def setup_logger():
-    global logger
-    file_handler = logging.FileHandler('wordbattle.log', 'w', 'utf-8')
-    stream_handler = logging.StreamHandler()
-    logger = logging.getLogger("AliceLogic_log")
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-    logger.addHandler(file_handler)
-    logger.addHandler(stream_handler)
-
-
 class AliceLogic:
     def __init__(self):
-        setup_logger()
         self._games = {}
 
-    def to_first_word(self, session_id):
-        game = self.get_or_create_game(session_id)
-
+    def to_first_word(self, game):
         player2 = game.get_current_player()
         first_word = game.get_first_word()
         player2.new_word(first_word)
@@ -39,12 +23,12 @@ class AliceLogic:
         game = self.get_or_create_game(session_id)
         game.start()
 
-        logger.info('Game started. session_id = {}'.format(session_id))
+        logging.info('Game started. session_id = {}'.format(session_id))
 
         self.add_player(session_id, user_id)
         self.add_player(session_id, Settings.ALICE_ID)
 
-        # return 'Выберите уровень.'
+        return self.to_first_word(game)
 
     def get_or_create_game(self, session_id: int):
         game = self._games.get(session_id, None)
@@ -66,7 +50,7 @@ class AliceLogic:
 
             game.add_player(player)
 
-        logger.info('Add new player. Session_id = {}, user_id = {}'.format(session_id, user_id))
+        logging.info('Add new player. Session_id = {}, user_id = {}'.format(session_id, user_id))
 
     def get_player(self, session_id, user_id):
         game = self.get_or_create_game(session_id)
@@ -86,19 +70,19 @@ class AliceLogic:
         word_checking_result = game.word_checking(text)
 
         if word_checking_result == WordTags.not_exist:
-            logger.info("Word doesn't exist. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
+            logging.info("Word doesn't exist. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
             return WordTags.not_exist
 
         if word_checking_result == WordTags.not_normal_form:
-            logger.info("Not normal form of word. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
+            logging.info("Not normal form of word. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
             return WordTags.not_normal_form
 
         if word_checking_result == WordTags.not_noun:
-            logger.info("Not noun. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
+            logging.info("Not noun. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
             return WordTags.not_noun
 
         if game.is_word_used(text):
-            logger.info("Word used. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
+            logging.info("Word used. session_id = {}, word = {}, user_id = {}".format(session_id, text, user_id))
             return WordTags.used.format(text)
 
         player.new_word(text)
