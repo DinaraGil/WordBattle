@@ -10,21 +10,21 @@ import typing
 
 
 class AliceBot(BotPlayer):
-    def __init__(self, game: Game, user_id: int, name: str, health: float):
-        super().__init__(game, user_id, name, health)
+    def __init__(self, game: Game, user_id: int, name: str, health: float, level: int):
+        super().__init__(game, user_id, name, health, level)
         self._game = game
         self._name = name
         self._reply_str = ''
         self._user_id = user_id
         self._formed_word = ''
         self._attack_word = ''
-        self._level = None
+        self._level = BotLevel(level).get_level()
 
     def new_word(self, attack_word):
         self._game.on_player_word(self, attack_word)
 
-    def create_new_word(self, level):  # attack_word
-        self._formed_word = create_bot_word(self._game, self._attack_word, level)
+    def create_new_word(self):  # attack_word
+        self._formed_word = create_bot_word(self._game, self._attack_word, self._level)
 
     @property
     def formed_word(self):
@@ -39,14 +39,3 @@ class AliceBot(BotPlayer):
 
     def get_reply_str(self):
         return self._reply_str
-
-    def set_level(self, number):
-        self._level = BotLevel(number).get_level()
-
-    @property
-    def level(self):
-        return self._level
-
-    def is_level_selected(self):
-        return self._level is not None
-

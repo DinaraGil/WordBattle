@@ -6,10 +6,11 @@ from IPlayer import IPlayer
 from Settings import WordToBits
 import random
 from Word import Word
+from BotLevel import BotLevel
 
 
 class BotPlayer(IPlayer):
-    def __init__(self, game: Game, user_id: int, name: str, health: float):
+    def __init__(self, game: Game, user_id: int, name: str, health: float, level):
         super().__init__(game, user_id, name, health)
         self._game = game
         self._name = name
@@ -17,12 +18,13 @@ class BotPlayer(IPlayer):
         self._user_id = user_id
         self._formed_word = ''
         self._attack_word = ''
+        self._level = BotLevel(level).get_level()
 
     def new_word(self, attack_word):
         self._game.on_player_word(self, attack_word)
 
-    def create_new_word(self, level): #attack_word
-        self._formed_word = create_bot_word(self._game, self._attack_word, level)
+    def create_new_word(self): #attack_word
+        self._formed_word = create_bot_word(self._game, self._attack_word, self._level)
 
     @property
     def formed_word(self):
