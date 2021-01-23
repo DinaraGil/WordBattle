@@ -1,9 +1,9 @@
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from Settings import Settings, WordTags
-from TelegramClientLogic import TelegramClientLogic
+from TelegramLogic import TelegramLogic
 from Settings import GameModes
-from Level import GameLevel, FirstLevel
+from BotLevel import BotLevel, FirstLevel
 
 logger = None
 
@@ -18,7 +18,7 @@ def setup_logger():
     logger.addHandler(stream_handler)
 
 
-class TelegramClient:
+class TelegramServer:
     def __init__(self, game_mode):
         self.game_mode = game_mode
 
@@ -37,8 +37,8 @@ class TelegramClient:
 
         dp.add_handler(MessageHandler(Filters.text, self.get_message))
 
-        self.logic = TelegramClientLogic(game_mode)
-        self.level = GameLevel(1).get_level()
+        self.logic = TelegramLogic(game_mode)
+        self.level = BotLevel(1).get_level()
 
         self._updater.start_polling()
 
@@ -93,7 +93,7 @@ class TelegramClient:
         if self.game_mode == GameModes.with_bot:
             if text.isdigit():
                 if int(text) in Settings.AVAILABLE_LEVELS:
-                    self.level = GameLevel(int(text)).get_level()
+                    self.level = BotLevel(int(text)).get_level()
                     return
 
         logic_message = self.logic.process_user_message(text, chat_id, user_id)

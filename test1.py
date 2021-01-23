@@ -13,10 +13,10 @@
 # file.close()
 # file2.close()
 
-from Level import GameLevel
+from BotLevel import BotLevel
 from Word import Word
 
-level = GameLevel(1).get_level()
+level = BotLevel(1).get_level()
 
 random_index = level.get_random_index()
 random_word = level.get_random_word()

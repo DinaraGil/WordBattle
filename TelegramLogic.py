@@ -23,7 +23,7 @@ def setup_logger():
     logger.addHandler(stream_handler)
 
 
-class TelegramClientLogic:
+class TelegramLogic:
     def __init__(self, game_mode):
         setup_logger()
         self._games = {}

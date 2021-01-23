@@ -1,4 +1,4 @@
-from TelegramClient import TelegramClient
+from TelegramServer import TelegramServer
 from Settings import GameModes
 
-telegram_client = TelegramClient(GameModes.with_users)
+telegram_client = TelegramServer(GameModes.with_users)

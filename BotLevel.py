@@ -66,7 +66,7 @@ class ThirdLevel(Level):
         return random_word
 
 
-class GameLevel:
+class BotLevel:
     def __init__(self, level_number):
         self.level: Optional[Level] = None
         if level_number == 1:

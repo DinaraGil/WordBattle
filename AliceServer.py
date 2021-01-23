@@ -4,7 +4,7 @@ import json
 from AliceLogic import AliceLogic
 from Settings import WordTags
 from Settings import Settings
-from Level import GameLevel
+from BotLevel import BotLevel
 
 app = Flask(__name__)
 
@@ -20,7 +20,7 @@ def setup_logger():
 class AliceServer:
     def __init__(self):
         self.logic = AliceLogic()
-        self.level = GameLevel(1).get_level()
+        self.level = BotLevel(1).get_level()
         self.is_level_chosen = False
         self.is_new_game = True
 
@@ -50,21 +50,21 @@ class AliceServer:
     def get_message(self, session_id, user_id, text):
         if text.lower() in ['помощь', 'что ты умеешь?', 'что ты умеешь']:
             return Settings.HELP_MESSAGE
-
-        if not self.is_level_chosen:
-            if text.lower() in ['1 уровень', '2 уровень', '3 уровень']:
-                level = 0
-                if text.lower() == '1 уровень':
-                    level = 1
-                elif text.lower() == '2 уровень':
-                    level = 2
-                elif text.lower() == '3 уровень':
-                    level = 3
-                self.is_level_chosen = True
-                self.level = GameLevel(level).get_level()
-                return self.start(session_id, user_id)
-            else:
-                return 'Пожалуйста выберите уровень'
+        #
+        # if not self.is_level_chosen:
+        #     if text.lower() in ['1 уровень', '2 уровень', '3 уровень']:
+        #         level = 0
+        #         if text.lower() == '1 уровень':
+        #             level = 1
+        #         elif text.lower() == '2 уровень':
+        #             level = 2
+        #         elif text.lower() == '3 уровень':
+        #             level = 3
+        #         self.is_level_chosen = True
+        #         self.level = BotLevel(level).get_level()
+        #         return self.start(session_id, user_id)
+        #     else:
+        #         return 'Пожалуйста выберите уровень'
 
         if self.gameover_check(session_id):
             return self.gameover_reply(session_id, user_id, text)

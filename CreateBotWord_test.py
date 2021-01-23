@@ -2,9 +2,9 @@ import unittest
 from CreateBotWord import create_bot_word
 from BotPlayer import BotPlayer
 from Game import Game
-from Level import GameLevel
+from BotLevel import BotLevel
 from TelegramPlayer import TelegramPlayer
-from TelegramClientLogic import TelegramClientLogic
+from TelegramLogic import TelegramLogic
 
 
 class TestCreateBotWord(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestCreateBotWord(unittest.TestCase):
         game.add_player(bot_player)
         game.add_player(player)
         
-        level = GameLevel(1).get_level()
+        level = BotLevel(1).get_level()
         
         for i in range(5):
             player.new_word(input())

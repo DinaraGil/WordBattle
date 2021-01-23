@@ -4,9 +4,12 @@ from Settings import WordToBits
 import random
 from Word import Word
 from CreateBotWord import create_bot_word
+from BotPlayer import BotPlayer
+from BotLevel import BotLevel
+import typing
 
 
-class BotPlayer(IPlayer):
+class AliceBot(BotPlayer):
     def __init__(self, game: Game, user_id: int, name: str, health: float):
         super().__init__(game, user_id, name, health)
         self._game = game
@@ -15,6 +18,7 @@ class BotPlayer(IPlayer):
         self._user_id = user_id
         self._formed_word = ''
         self._attack_word = ''
+        self._level = None
 
     def new_word(self, attack_word):
         self._game.on_player_word(self, attack_word)
@@ -35,3 +39,14 @@ class BotPlayer(IPlayer):
 
     def get_reply_str(self):
         return self._reply_str
+
+    def set_level(self, number):
+        self._level = BotLevel(number).get_level()
+
+    @property
+    def level(self):
+        return self._level
+
+    def is_level_selected(self):
+        return self._level is not None
+
