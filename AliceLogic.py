@@ -129,7 +129,7 @@ class AliceLogic:
 
         if session_id in self._games:
             if self.is_gameover(session_id):
-                if text == 'да':
+                if text.lower() in Settings.START_NEW_GAME:
                     self._games.pop(session_id, None)
                 else:
                     return self.gameover_message(session_id)

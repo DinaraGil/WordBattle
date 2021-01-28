@@ -23,10 +23,22 @@ random_word = level.get_random_word()
 
 bin_word_number = random_word.bin_number
 
-attack_word_bin = Word('кот')
+attack_word_bin = Word('аа')
+
 attack_word_bin_number = attack_word_bin.bin_number
+
+print(attack_word_bin_number)
 
 mask = bin_word_number & attack_word_bin_number
 
 print(mask)
 
+
+text = 'собака'
+print(' '.join(list(text)))
+
+text = 'Вы атакованы заклинанием "кошка". ЛАлалал'
+if '"' in text:
+    text_lst = text.split('"')
+    word = ' '.join(text_lst[1])
+    print(str(text_lst[0]) + word + str(text_lst[2]))
