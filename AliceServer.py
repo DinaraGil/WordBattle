@@ -9,10 +9,12 @@ class AliceServer:
         self._logic = AliceLogic()
 
     def process_request(self, request):
+        logging.info(f'Request:  {request!r}')
+
         req = request.json
 
         session_id = req['session']['session_id']
-        user_id = req['session']['user']['user_id']
+        user_id = Settings.USER_ID  # req['session']['user']['user_id']
 
         # Начинаем формировать ответ, согласно документации
         # мы собираем словарь, который потом при помощи
