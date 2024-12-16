@@ -1,6 +1,7 @@
 from flask import Flask, request
 import logging
 from AliceServer import AliceServer
+import psutil
 
 app = Flask(__name__)
 alice_server = AliceServer()
@@ -24,4 +25,5 @@ def main():
 
 if __name__ == '__main__':
     setup_logger()
+    print(f"Память: {psutil.Process().memory_info().rss / 1024 ** 2:.2f} МБ")
     app.run()

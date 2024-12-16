@@ -2,7 +2,7 @@ import random
 from Settings import WordToBits
 from Settings import Settings
 from typing import Optional
-
+#bot player for voice assistant
 
 class Level:
     def __init__(self, random_index, random_word):

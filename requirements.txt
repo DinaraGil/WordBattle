@@ -1,3 +1,3 @@
-Flask==1.1.2
+Flask==3.0.3
 python-telegram-bot==13.0
 pymorphy2==0.8

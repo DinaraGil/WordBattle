@@ -11,7 +11,7 @@ import typing
 
 class AliceBot(BotPlayer):
     def __init__(self, game: Game, user_id: int, name: str, health: float, level: int):
-        super().__init__(game, user_id, name, health, level)
+        super().__init__(game, user_id, name, health) #level
         self._game = game
         self._name = name
         self._reply_str = ''

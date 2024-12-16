@@ -1,5 +1,4 @@
 import unittest
-from CreateBotWord import create_bot_word
 from BotPlayer import BotPlayer
 from Game import Game
 from BotLevel import BotLevel

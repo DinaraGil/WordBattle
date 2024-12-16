@@ -1,7 +1,7 @@
 from Game import Game
 from IPlayer import IPlayer
 from Settings import Settings
-
+#player user for voice assistant
 
 class AlicePlayer(IPlayer):
     def __init__(self, game: Game, user_id: int, health: float):

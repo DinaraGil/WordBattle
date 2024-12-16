@@ -1,5 +1,5 @@
 from abc import abstractmethod
-
+#main player class
 
 class IPlayer:
     def __init__(self, game, user_id, name: str, health: float):

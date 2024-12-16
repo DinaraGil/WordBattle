@@ -43,5 +43,3 @@ class AliceServer:
 
         # Преобразовываем в JSON и возвращаем
         return json.dumps(response)
-
-

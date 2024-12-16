@@ -162,6 +162,3 @@ class AliceLogic:
         response += '\n' + self.process_bot_message(session_id)
 
         return response
-
-
-

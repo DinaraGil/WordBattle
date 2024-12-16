@@ -4,7 +4,7 @@ from pymorphy2 import MorphAnalyzer
 from Settings import WordTags
 import random
 from Settings import FirstWords
-
+#game logic
 
 class Game:
     def __init__(self):

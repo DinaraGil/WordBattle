@@ -1,8 +1,3 @@
-Game started. Chat_Got command /addAdd new Got command /add_player
-6565, username = Динара, user_id = 776625534
-Add new player. Chat_id = -351916565, username = Алена, user_id = 979206065
-Not noun. Chat_id = -351916565, word = Пропустить, user_id = 979206065
-Not normal form of word. Chat_id = -351916565, word = Непарнокопытное, user_id = 979206065
-Word doesn't exist. Chat_id = -351916565, word = Парнокопотное, user_id = 979206065
-Not noun. Chat_id = -351916565, word = Угу, user_id = 979206065
-Word doesn't exist. Chat_id = -351916565, word = Бедное моё солнце, user_id = 979206065
+Game started. Chat_id = 1
+Add new player. Chat_id = 1, username = a, user_id = 1
+Add new player. Chat_id = 1, username = b, user_id = 2

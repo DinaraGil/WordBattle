@@ -69,7 +69,6 @@ class TelegramLogic:
         if self.get_player(chat_id, user_id) is None:
             if user_id == Settings.BOT_ID:
                 player = BotPlayer(game, user_id, username, health)
-
             else:
                 player = TelegramPlayer(game, user_id, username, health)
 
@@ -141,7 +140,7 @@ class TelegramLogic:
         game = self.get_or_create_game(chat_id)
 
         bot_player = game.get_current_player()
-        bot_player.create_new_word(level) #text
+        bot_player.create_new_word() #text
 
         return bot_player.formed_word
 

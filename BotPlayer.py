@@ -10,7 +10,7 @@ from BotLevel import BotLevel
 
 
 class BotPlayer(IPlayer):
-    def __init__(self, game: Game, user_id: int, name: str, health: float, level):
+    def __init__(self, game: Game, user_id: int, name: str, health: float): #level
         super().__init__(game, user_id, name, health)
         self._game = game
         self._name = name
@@ -18,7 +18,7 @@ class BotPlayer(IPlayer):
         self._user_id = user_id
         self._formed_word = ''
         self._attack_word = ''
-        self._level = BotLevel(level).get_level()
+        self._level = BotLevel(1).get_level()
 
     def new_word(self, attack_word):
         self._game.on_player_word(self, attack_word)
